@@ -6,9 +6,13 @@ import Nav from './components/Nav'
 
 import './registerServiceWorker'
 import './assets/styles/index.css';
+import { firestorePlugin, rtdbPlugin } from 'vuefire'
 
 Vue.config.productionTip = false
-Vue.component('nav', Nav);
+// Vue.component('nav', Nav);
+
+Vue.use(firestorePlugin);
+Vue.use(rtdbPlugin);
 
 new Vue({
   router,
