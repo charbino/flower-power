@@ -17,11 +17,14 @@ export default new Vuex.Store({
         addFlower(state, newFlower) {
             state.flowers.push(newFlower)
         },
+        deleteFlower(state, idFlower) {
+            state.flowers = state.flowers.filter(flower => flower.id !== idFlower);
+        }
     },
     actions: {
         addFlower({commit, dispatch}, newFlower) {
-            commit('addFlower', newFlower)
-            flowersCollection.add(newFlower).then(() => {
+
+            flowersCollection.doc(String(newFlower.id)).set(newFlower).then(() => {
                 console.log('Flower Add')
             })
             dispatch('saveFlowers')
@@ -33,21 +36,12 @@ export default new Vuex.Store({
                     const flowers = querySnapshot.docs.map(doc => doc.data())
                     state.flowers = flowers;
                 })
-
-            // if (ls.getItems('flowers')) {
-            //     try {
-            //         storage.flower = JSON.parse(localStorage.getItem('flowers'));
-            //     } catch (e) {
-            //         localStorage.removeItem('flowers');
-            //     }
-            // }
         },
-        async saveFlowers({state}) {
-            // const parsed = JSON.stringify(state.flowers);
-            // localStorage.setItem('flowers', parsed);
-            // flowersCollection.add(state.flowers).then(() => {
-            //     console.log('Flower Add')
-            // })
+        deleteFlower({state, commit}, idFlower) {
+            flowersCollection
+                .doc(String(idFlower))
+                .delete()
+            commit('deleteFlower', idFlower)
         }
     },
     modules: {}

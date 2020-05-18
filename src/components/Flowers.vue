@@ -1,11 +1,13 @@
 <template>
     <div class="flex flex-col mt-20 mx-4">
+        <ModalDelete></ModalDelete>
         <div class="container mx-auto px-4">
             <button @click="displayForm=!displayForm"
                     class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                 + Ajouter une fleur
             </button>
             <FlowerForm
+                    :nextId="flowers.length+1"
                     @submit="addFlower"
                     v-show="displayForm"
             />
@@ -21,7 +23,6 @@
                         :key="i"
                         :flower="flower"/>
             </ul>
-
         </div>
     </div>
 </template>
@@ -30,12 +31,15 @@
     import {mapState, mapActions} from 'vuex'
     import FlowerForm from "./FlowerForm";
     import Flower from "./Flower";
+    import ModalDelete from './ModalDelete';
+    import {eventBus, DELETE_FLOWER} from "../helper/eventBus";
 
     export default {
         name: "Flowers",
         components: {
             Flower,
-            FlowerForm
+            FlowerForm,
+            ModalDelete
         },
         data() {
             return {
@@ -49,12 +53,17 @@
         },
         mounted() {
             this.initFromStorage();
+            eventBus.$on(DELETE_FLOWER, (id) => {
+                this.deleteFlower(id);
+                eventBus.toggleModalDelete(id);
+            });
         },
         methods: {
             ...mapActions([
                 'addFlower',
                 'saveFlowers',
                 'initFromStorage',
+                'deleteFlower'
             ])
         }
     }
